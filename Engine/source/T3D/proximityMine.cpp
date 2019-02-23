@@ -128,6 +128,20 @@ void ProximityMineData::initPersistFields()
    Parent::initPersistFields();
 }
 
+void ProximityMine::initPersistFields()
+{
+    addGroup("Source");
+
+    addField("sourceObject",     TypeS32,     Offset(mSourceObjectId, ProximityMine),
+       "@brief ID number of the object that fired the projectile.\n\n"
+       "@note If the projectile was fired by a WeaponImage, sourceObject will be "
+       "the object that owns the WeaponImage. This is usually the player.");
+
+    endGroup("Source");
+
+    Parent::initPersistFields();
+}
+
 bool ProximityMineData::preload( bool server, String& errorStr )
 {
    if ( Parent::preload( server, errorStr ) == false )
@@ -331,7 +345,20 @@ bool ProximityMine::onAdd()
    addToScene();
 
    if (isServerObject())
+   {
       scriptOnAdd();
+
+      ShapeBase* ptr;
+      if (Sim::findObject(mSourceObjectId, ptr))
+      {
+         mSourceObject = ptr;
+
+         // Since we later do processAfter( mSourceObject ) we must clearProcessAfter
+         // if it is deleted. SceneObject already handles this in onDeleteNotify so
+         // all we need to do is register for the notification.
+         deleteNotify( ptr );
+      }
+   }
 
    if ( mStatic )
    {
@@ -457,6 +484,12 @@ void ProximityMine::processTick( const Move* move )
                if ( ( sql.mList[i] == mOwner && !mDataBlock->triggerOnOwner ) ||
                     sql.mList[i]->getVelocity().len() < mDataBlock->triggerSpeed )
                   continue;
+
+               if (mSourceObject.isValid() && sql.mList[i] == mSourceObject && !mDataBlock->triggerOnOwner ||
+                       sql.mList[i]->getVelocity().len() < mDataBlock->triggerSpeed )
+               {
+                   continue;
+               }
 
                // Mine has been triggered
                mShapeInstance->destroyThread( mAnimThread );

@@ -89,6 +89,8 @@ protected:
 
    TSThread*            mAnimThread;
    SceneObject*         mOwner;
+   S32                  mSourceObjectId;
+   SimObjectPtr<ShapeBase> mSourceObject; ///< Actual pointer to the source object, times out after SourceIdTimeoutTicks
 
    State                mState;
    F32                  mStateTimeout;
@@ -116,6 +118,7 @@ public:
 
    void advanceTime( F32 dt );
 
+   static void initPersistFields();
    U32  packUpdate  ( NetConnection* conn, U32 mask, BitStream* stream );
    void unpackUpdate( NetConnection* conn, BitStream* stream );
 };

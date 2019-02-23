@@ -262,8 +262,8 @@ void ProcessedMaterial::_initPassStateBlock( RenderPassData *rpd, GFXStateBlockD
             }
             else
             {
-               result.samplers[i].minFilter = GFXTextureFilterLinear;
-               result.samplers[i].magFilter = GFXTextureFilterLinear;
+               result.samplers[i].minFilter = GFXTextureFilterNone;
+               result.samplers[i].magFilter = GFXTextureFilterNone;
             }
             break;
          }

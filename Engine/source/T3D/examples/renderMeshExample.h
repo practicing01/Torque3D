@@ -78,6 +78,15 @@ class RenderMeshExample : public SceneObject
    GFXVertexBufferHandle< VertexType > mVertexBuffer;
    GFXPrimitiveBufferHandle            mPrimitiveBuffer;
 
+protected:
+   // ProcessObject
+   virtual void processTick( const Move *move );
+   virtual void interpolateTick( F32 delta );
+   virtual void advanceTime( F32 dt );
+
+   /// Start or stop processing ticks depending on our state.
+   void _updateShouldTick();
+
 public:
    RenderMeshExample();
    virtual ~RenderMeshExample();
@@ -112,6 +121,9 @@ public:
    // This function handles receiving relevant data from the server
    // object and applying it to the client object
    void unpackUpdate( NetConnection *conn, BitStream *stream );
+
+   virtual void onMount( SceneObject *obj, S32 node );
+   virtual void onUnmount( SceneObject *obj, S32 node );
 
    //--------------------------------------------------------------------------
    // Object Rendering

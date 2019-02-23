@@ -122,6 +122,53 @@ void RenderMeshExample::onRemove()
    Parent::onRemove();
 }
 
+void RenderMeshExample::processTick( const Move *move )
+{
+    Parent::processTick(move);
+
+   if ( isMounted() )
+   {
+      MatrixF mat( true );
+      mMount.object->getMountTransform(mMount.node, mMount.xfm, &mat );
+      setTransform( mat );
+   }
+}
+
+void RenderMeshExample::interpolateTick( F32 delta )
+{
+}
+
+void RenderMeshExample::advanceTime( F32 dt )
+{
+   if ( isMounted() )
+   {
+      MatrixF mat( true );
+      mMount.object->getRenderMountTransform( dt, mMount.node, mMount.xfm, &mat );
+      setRenderTransform( mat );
+   }
+}
+
+void RenderMeshExample::_updateShouldTick()
+{
+   bool shouldTick = isMounted();
+
+   if ( isTicking() != shouldTick )
+      setProcessTick( shouldTick );
+}
+
+void RenderMeshExample::onMount( SceneObject *obj, S32 node )
+{
+   Parent::onMount(obj, node);
+   _updateShouldTick();
+}
+
+void RenderMeshExample::onUnmount( SceneObject *obj, S32 node )
+{
+   Parent::onUnmount( obj, node );
+   setMaskBits( TransformMask );
+   _updateShouldTick();
+}
+
 void RenderMeshExample::setTransform(const MatrixF & mat)
 {
    // Let SceneObject handle all of the matrix manipulation
