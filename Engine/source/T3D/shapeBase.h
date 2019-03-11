@@ -1282,6 +1282,9 @@ public:
    /// @param   amount   Amount to repair object by
    void applyRepair(F32 amount);
 
+   /// Stops repair.
+   void stopRepair();
+
    /// Sets the direction from which the damage is coming
    /// @param   vec   Vector indicating the direction of the damage
    void setDamageDir(const VectorF& vec)  { damageDir = vec; }

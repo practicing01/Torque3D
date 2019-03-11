@@ -1804,6 +1804,11 @@ void ShapeBase::applyRepair(F32 amount)
       mRepairReserve = mDamage;
 }
 
+void ShapeBase::stopRepair()
+{
+    mRepairReserve = 0.0f;
+}
+
 void ShapeBase::applyDamage(F32 amount)
 {
    if (amount > 0)
@@ -4611,6 +4616,11 @@ DefineEngineMethod( ShapeBase, applyRepair, void, ( F32 amount ),,
    "@param amount total repair value (subtracted from damage level over time)\n" )
 {
    object->applyRepair( amount );
+}
+
+DefineEngineMethod(ShapeBase, stopRepair, void, (),, "@brief Stops repair.")
+{
+   object->stopRepair();
 }
 
 DefineEngineMethod( ShapeBase, setRepairRate, void, ( F32 rate ),,
