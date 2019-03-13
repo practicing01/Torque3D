@@ -150,7 +150,6 @@ class VolumetricFog : public SceneObject
       F32 mObjSize;
       F32 mRadius;
       OrientedBox3F ColBox;
-      VectorF mObjScale;
       F32 mMinDisplaySize;
       F32 mInvScale;
    

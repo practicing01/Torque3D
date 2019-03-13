@@ -239,7 +239,6 @@ bool VolumetricFog::onAdd()
    addToScene();
    ColBox.set(getTransform(), (mObjBox.getExtents() * getScale() * COLBOX_SCALE));
    mObjSize = mWorldBox.getGreatestDiagonalLength();
-   mObjScale = getScale();
    mTexTiles = mAbs(mTexTiles);
    mSpeed.set(mSpeed1.x, mSpeed1.y, mSpeed2.x, mSpeed2.y);
    mInvScale = (1.0f / getMax(getMax(mObjScale.x, mObjScale.y), mObjScale.z));
@@ -567,6 +566,13 @@ U32 VolumetricFog::packUpdate(NetConnection *con, U32 mask, BitStream *stream)
       mObjScale = getScale();
       mInvScale = (1.0f / getMax(getMax(mObjScale.x, mObjScale.y), mObjScale.z));
    }
+   if (stream->writeFlag(mask & ScaleMask))
+   {
+      mObjScale = getScale();
+      // Only write one bit if the scale is one.
+      if (stream->writeFlag(mObjScale != Point3F::One))
+         mathWrite(*stream, mObjScale);
+   }
    return retMask;
 }
 
@@ -661,6 +667,23 @@ void VolumetricFog::unpackUpdate(NetConnection *con, BitStream *stream)
       mObjSize = mWorldBox.getGreatestDiagonalLength();
       mObjScale = getScale();
       mInvScale = (1.0f / getMax(getMax(mObjScale.x, mObjScale.y), mObjScale.z));
+   }
+   if (stream->readFlag())//scale
+   {
+      if (stream->readFlag())
+      {
+         VectorF scale;
+         mathRead(*stream, &scale);
+         setScale(scale);
+      }
+      else
+      {
+         setScale(Point3F::One);
+      }
+      mObjScale = getScale();
+      mInvScale = (1.0f / getMax(getMax(mObjScale.x, mObjScale.y), mObjScale.z));
+      ColBox.set(getTransform(), (mObjBox.getExtents() * getScale() * COLBOX_SCALE));
+      mObjSize = mWorldBox.getGreatestDiagonalLength();
    }
 }
 
