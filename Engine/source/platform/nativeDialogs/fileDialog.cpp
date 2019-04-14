@@ -226,8 +226,8 @@ bool FileDialog::Execute()
       }
 
       ++i;
-      if (i < filtersCount - 2)
-         strippedFilters += String(";");
+      //if (i < filtersCount - 2)
+         //strippedFilters += String(";");
    }
 
    //strip the last character, if it's unneeded
