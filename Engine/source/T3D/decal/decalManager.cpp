@@ -1789,3 +1789,25 @@ DefineEngineFunction( decalManagerEditDecal, bool, ( S32 decalID, Point3F pos, P
    gDecalManager->notifyDecalModified( decalInstance );
    return true;
 }
+
+DefineEngineFunction( decalManagerFindDecal, S32,
+   ( Point3F position ),,
+   "Finds the closest decal.\n"
+   "@param position World position for the spherecast.\n"
+   "@return Returns the ID of the Decal object or -1 on failure.\n"
+   "@tsexample\n"
+   "// Specify the sphere position\n"
+   "%position = \"1.0 1.0 1.0\";\n\n"
+   "// Add the new decal.\n"
+   "%decalObj = decalManagerAddDecal( %position );\n"
+   "@endtsexample\n"
+   "@ingroup Decals" )
+{
+   DecalInstance* inst = gDecalManager->getClosestDecal( position );
+   if( !inst )
+   {
+      return -1;
+   }
+
+   return inst->mId;
+}
