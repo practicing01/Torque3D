@@ -3979,12 +3979,12 @@ void WorldEditor::makeSelectionAMesh(const char *filename)
    }
 
    // Use a ColladaUtils function to do the actual export to a Collada file
-   ColladaUtils::exportToCollada(filename, exportData);
+   ColladaUtils::exportToCollada(Torque::Path::CompressPath(filename), exportData);
    //
 
    // Allocate TSStatic object and add to level.
    TSStatic *ts = new TSStatic();
-   ts->setShapeFileName(StringTable->insert(filename));
+   ts->setShapeFileName(StringTable->insert(Torque::Path::CompressPath(filename)));
    fabMat.inverse();
    ts->setTransform(fabMat);
    ts->registerObject();
