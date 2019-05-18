@@ -1202,7 +1202,7 @@ bool executeFile(const char* fileName, bool noCalls, bool journalScript)
          isEditorScript = true;
    }
 
-   StringTableEntry scriptFileName = StringTable->insert(scriptFilenameBuffer);
+   StringTableEntry scriptFileName = StringTable->insert(Torque::Path::CompressPath(scriptFilenameBuffer).c_str());
 
    // Is this a file we should compile? (anything in the prefs path should not be compiled)
    StringTableEntry prefsPath = Platform::getPrefsPath();
