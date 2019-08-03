@@ -2144,3 +2144,54 @@ DefineEngineMethod( Camera, lookAt, void, (Point3F point), ,
 {
    object->lookAt(point);
 }
+
+//----------------------------------------------------------------------------
+
+bool Camera::checkInFoV(GameBase* target, F32 camFov, bool _checkEnabled)
+{
+   if (!isServerObject()) return false;
+   if (!target)
+   {
+      target = mOrbitObject.getPointer();
+      if (!target)
+         return false;
+   }
+   if (_checkEnabled)
+   {
+       if (target->getTypeMask() & ShapeBaseObjectType)
+       {
+           ShapeBase *shapeBaseCheck = static_cast<ShapeBase *>(target);
+           if (shapeBaseCheck)
+               if (shapeBaseCheck->getDamageState() != Enabled) return false;
+       }
+       else
+           return false;
+   }
+
+   MatrixF cam = getTransform();
+   Point3F camPos;
+   VectorF camDir;
+
+   cam.getColumn(3, &camPos);
+   cam.getColumn(1, &camDir);
+
+   camFov = mDegToRad(camFov) / 2;
+
+   Point3F shapePos = target->getBoxCenter();
+   VectorF shapeDir = shapePos - camPos;
+   // Test to see if it's within our viewcone, this test doesn't
+   // actually match the viewport very well, should consider
+   // projection and box test.
+   shapeDir.normalize();
+   F32 dot = mDot(shapeDir, camDir);
+   return (dot > mCos(camFov));
+}
+
+DefineEngineMethod(Camera, checkInFoV, bool, (ShapeBase* obj, F32 fov, bool checkEnabled), (nullAsType<ShapeBase*>(), 45.0f, false),
+   "@brief Check whether an object is within a specified veiw cone.\n"
+   "@obj Object to check. (If blank, it will check the current target).\n"
+   "@fov view angle in degrees.(Defaults to 45)\n"
+   "@checkEnabled check whether the object can take damage and if so is still alive.(Defaults to false)\n")
+{
+   return object->checkInFoV(obj, fov, checkEnabled);
+}

@@ -193,6 +193,8 @@ class Camera: public ShapeBase
       GameBase* getOrbitObject()      { return(mOrbitObject); }
       bool isObservingClientObject()   { return(mObservingClientObject); }
 
+      bool checkInFoV(GameBase* target = NULL, F32 camFov = 45.0f, bool _checkEnabled = false);
+
       /// @name NewtonFlyMode
       /// @{
 
