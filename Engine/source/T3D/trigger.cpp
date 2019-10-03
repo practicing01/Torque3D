@@ -519,6 +519,13 @@ void Trigger::setTransform(const MatrixF & mat)
    }
 }
 
+void Trigger::onUnmount( SceneObject *obj, S32 node )
+{
+    Parent::onUnmount( obj, node );
+   // Make sure the client get's the final server pos.
+   setMaskBits(TransformMask | ScaleMask);
+}
+
 void Trigger::prepRenderImage( SceneRenderState *state )
 {
    // only render if selected or render flag is set
@@ -677,6 +684,13 @@ void Trigger::processTick(const Move* move)
    if (!mDataBlock->isClientSide && isClientObject())
       return;
 
+   if (isMounted()) {
+         MatrixF mat;
+         mMount.object->getMountTransform( mMount.node, mMount.xfm, &mat );
+         setTransform(mat);
+         setRenderTransform(mat);
+    }
+
    //
    if (mObjects.size() == 0)
       return;
@@ -713,6 +727,15 @@ void Trigger::processTick(const Move* move)
    else
    {
       mCurrTick += TickMs;
+   }
+}
+
+void Trigger::interpolateTick(F32 delta)
+{
+   if (isMounted()) {
+      MatrixF mat;
+      mMount.object->getRenderMountTransform( delta, mMount.node, mMount.xfm, &mat );
+      setRenderTransform(mat);
    }
 }
 
