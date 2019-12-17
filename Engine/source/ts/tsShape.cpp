@@ -2099,8 +2099,9 @@ void TSShape::fixEndian(S32 * buff32, S16 * buff16, S8 *, S32 count32, S32 count
 
 template<> void *Resource<TSShape>::create(const Torque::Path &path)
 {
+    Torque::Path cleanPath = Torque::Path::CompressPath(path);
    // Execute the shape script if it exists
-   Torque::Path scriptPath(path);
+   Torque::Path scriptPath(cleanPath);
    scriptPath.setExtension("cs");
 
    // Don't execute the script if we're already doing so!
@@ -2124,15 +2125,15 @@ template<> void *Resource<TSShape>::create(const Torque::Path &path)
    // Attempt to load the shape
    TSShape * ret = 0;
    bool readSuccess = false;
-   const String extension = path.getExtension();
+   const String extension = cleanPath.getExtension();
 
    if ( extension.equal( "dts", String::NoCase ) )
    {
       FileStream stream;
-      stream.open( path.getFullPath(), Torque::FS::File::Read );
+      stream.open( cleanPath.getFullPath(), Torque::FS::File::Read );
       if ( stream.getStatus() != Stream::Ok )
       {
-         Con::errorf( "Resource<TSShape>::create - Could not open '%s'", path.getFullPath().c_str() );
+         Con::errorf( "Resource<TSShape>::create - Could not open '%s'", cleanPath.getFullPath().c_str() );
          return NULL;
       }
 
@@ -2143,11 +2144,11 @@ template<> void *Resource<TSShape>::create(const Torque::Path &path)
    {
 #ifdef TORQUE_COLLADA
       // Attempt to load the DAE file
-      ret = loadColladaShape(path);
+      ret = loadColladaShape(cleanPath);
       readSuccess = (ret != NULL);
 #else
       // No COLLADA support => attempt to load the cached DTS file instead
-      Torque::Path cachedPath = path;
+      Torque::Path cachedPath = cleanPath;
       cachedPath.setExtension("cached.dts");
        
       FileStream stream;
@@ -2163,14 +2164,14 @@ template<> void *Resource<TSShape>::create(const Torque::Path &path)
    }
    else
    {
-      Con::errorf( "Resource<TSShape>::create - '%s' has an unknown file format", path.getFullPath().c_str() );
+      Con::errorf( "Resource<TSShape>::create - '%s' has an unknown file format", cleanPath.getFullPath().c_str() );
       delete ret;
       return NULL;
    }
 
    if( !readSuccess )
    {
-      Con::errorf( "Resource<TSShape>::create - Error reading '%s'", path.getFullPath().c_str() );
+      Con::errorf( "Resource<TSShape>::create - Error reading '%s'", cleanPath.getFullPath().c_str() );
       delete ret;
       ret = NULL;
    }
