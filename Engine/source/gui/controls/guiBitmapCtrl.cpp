@@ -232,6 +232,16 @@ void GuiBitmapCtrl::setValue(S32 x, S32 y)
   	mStartPoint.y = y % 256;
 }
 
+void GuiBitmapCtrl::parentResized(const RectI &oldParentRect, const RectI &newParentRect)
+{
+    Parent::parentResized(oldParentRect, newParentRect);
+}
+
+bool GuiBitmapCtrl::resize(const Point2I &newPosition, const Point2I &newExtent)
+{
+    Parent::resize(newPosition, newExtent);
+}
+
 DefineEngineMethod( GuiBitmapCtrl, setValue, void, ( S32 x, S32 y ),,
    "Set the offset of the bitmap within the control.\n"
    "@param x The x-axis offset of the image.\n"
