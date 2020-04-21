@@ -67,9 +67,6 @@ class GuiBitmapCtrl : public GuiControl
 
       void updateSizing();
 
-      void parentResized(const RectI &oldParentRect, const RectI &newParentRect);
-      bool resize(const Point2I &newPosition, const Point2I &newExtent);
-
       void onRender(Point2I offset, const RectI &updateRect);
       void setValue(S32 x, S32 y);
 
