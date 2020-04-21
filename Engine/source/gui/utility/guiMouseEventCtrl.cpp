@@ -262,6 +262,54 @@ IMPLEMENT_CALLBACK( GuiMouseEventCtrl, onRightMouseDragged, void, (  S32 modifie
    "@see GuiControl\n\n"
 );
 
+IMPLEMENT_CALLBACK( GuiMouseEventCtrl, onMouseWheelUp, void, (  S32 modifier, Point2I mousePoint, S32 mouseClickCount  ),
+                                                   ( modifier, mousePoint, mouseClickCount ),
+   "@brief Callback that occurs whenever the right mouse button is released while in this control.\n\n"
+   "@param modifier Key that was pressed during this callback. Values are:\n\n"
+   "$EventModifier::RSHIFT\n\n"
+   "$EventModifier::SHIFT\n\n"
+   "$EventModifier::LCTRL\n\n"
+   "$EventModifier::RCTRL\n\n"
+   "$EventModifier::CTRL\n\n"
+   "$EventModifier::CTRL\n\n"
+   "$EventModifier::RALT\n\n"
+   "$EventModifier::ALT\n\n"
+   "@param mousePoint X/Y location of the mouse point\n"
+   "@param mouseClickCount How many mouse clicks have occured for this event\n\n"
+   "@tsexample\n"
+   "// Right mouse button was released in this control, causing the callback\n"
+   "GuiMouseEventCtrl::onRightMouseUp(%this,%modifier,%mousePoint,%mouseClickCount)\n"
+   "{\n"
+   "	// Code to call when a mouse event occurs.\n"
+   "}\n"
+   "@endtsexample\n\n"
+   "@see GuiControl\n\n"
+);
+
+IMPLEMENT_CALLBACK( GuiMouseEventCtrl, onMouseWheelDown, void, (  S32 modifier, Point2I mousePoint, S32 mouseClickCount  ),
+                                                   ( modifier, mousePoint, mouseClickCount ),
+   "@brief Callback that occurs whenever the right mouse button is released while in this control.\n\n"
+   "@param modifier Key that was pressed during this callback. Values are:\n\n"
+   "$EventModifier::RSHIFT\n\n"
+   "$EventModifier::SHIFT\n\n"
+   "$EventModifier::LCTRL\n\n"
+   "$EventModifier::RCTRL\n\n"
+   "$EventModifier::CTRL\n\n"
+   "$EventModifier::CTRL\n\n"
+   "$EventModifier::RALT\n\n"
+   "$EventModifier::ALT\n\n"
+   "@param mousePoint X/Y location of the mouse point\n"
+   "@param mouseClickCount How many mouse clicks have occured for this event\n\n"
+   "@tsexample\n"
+   "// Right mouse button was released in this control, causing the callback\n"
+   "GuiMouseEventCtrl::onRightMouseUp(%this,%modifier,%mousePoint,%mouseClickCount)\n"
+   "{\n"
+   "	// Code to call when a mouse event occurs.\n"
+   "}\n"
+   "@endtsexample\n\n"
+   "@see GuiControl\n\n"
+);
+
 GuiMouseEventCtrl::GuiMouseEventCtrl()
 {
    mLockMouse = false;
@@ -288,6 +336,10 @@ void GuiMouseEventCtrl::sendMouseEvent(const char * name, const GuiEvent & event
 		onRightMouseUp_callback(event.modifier, event.mousePoint, event.mouseClickCount);
 	else if(dStricmp(name,"onRightMouseDragged") == 0)
 		onRightMouseDragged_callback(event.modifier, event.mousePoint, event.mouseClickCount);
+    else if(dStricmp(name,"onMouseWheelUp") == 0)
+       onMouseWheelUp_callback(event.modifier, event.mousePoint, event.mouseClickCount);
+    else if(dStricmp(name,"onMouseWheelDown") == 0)
+       onMouseWheelDown_callback(event.modifier, event.mousePoint, event.mouseClickCount);
 }
 
 //------------------------------------------------------------------------------
@@ -365,4 +417,36 @@ void GuiMouseEventCtrl::onRightMouseUp(const GuiEvent & event)
 void GuiMouseEventCtrl::onRightMouseDragged(const GuiEvent & event)
 {
    sendMouseEvent("onRightMouseDragged", event);
+}
+
+bool GuiMouseEventCtrl::onMouseWheelUp( const GuiEvent &event )
+{
+   //if this control is a dead end, make sure the event stops here
+   if ( !mVisible || !mAwake )
+      return true;
+
+   sendMouseEvent("onMouseWheelUp", event);
+   //pass the event to the parent
+   GuiControl *parent = getParent();
+   if ( parent )
+      return parent->onMouseWheelUp( event );
+   else
+      return false;
+}
+
+//-----------------------------------------------------------------------------
+
+bool GuiMouseEventCtrl::onMouseWheelDown( const GuiEvent &event )
+{
+   //if this control is a dead end, make sure the event stops here
+   if ( !mVisible || !mAwake )
+      return true;
+
+   sendMouseEvent("onMouseWheelDown", event);
+   //pass the event to the parent
+   GuiControl *parent = getParent();
+   if ( parent )
+      return parent->onMouseWheelDown( event );
+   else
+      return false;
 }

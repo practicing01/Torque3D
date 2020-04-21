@@ -35,6 +35,9 @@
 #ifndef _MPOLYHEDRON_H_
 #include "math/mPolyhedron.h"
 #endif
+#ifndef _SCENEOBJECT_H_
+#include "scene/sceneObject.h"
+#endif
 
 class Convex;
 class PhysicsBody;
